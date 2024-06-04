@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+
+ backend:
+  image: henange01750/brl_docker:brl_backend_v1
+  container_name: backend
+  ports:
+   - 8080-8999:8080
+  environment:
+   MYSQL_HOST: mysqldb
+   #DB_URL: jdbc:mysql://mysqldb:3307/spring_DB?autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
+   MYSQL_USER: spring_DB
+   MYSQL_PASSWORD: root
+   MYSQL_PORT: 3306
+  depends_on:
+   - mysqldb
+  
+  # networks:
+  #  - brl_network
+
+#  frontend:
+#   image: henange01750/brl_docker:brl_front_v1
+#   container_name: frontend
+#   ports:
+#    - "3001:3000"
+#   depends_on:
+#    - backend
+#   networks:
+#    - brl_network
+
+ mysqldb:
+  image: mysql:latest
+  container_name: mysqldb
+  ports:
+   - 3307:3306
+  environment:
+   MYSQL_ROOT_PASSWORD: root
+   MYSQL_DATABASE: spring_DB
+   #- MYSQL_PASSWORD=root
+  # volumes:
+  #  - mysql_data:/var/lib/mysql
+  
+  # networks:
+  #  - brl_network
+
+ 
+
+# volumes:
+#  mysql_data:
+
+# networks:
+#  brl_network:

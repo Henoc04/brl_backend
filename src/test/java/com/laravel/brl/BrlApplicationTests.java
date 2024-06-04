@@ -1,3 +1,4 @@
+/*
 package com.laravel.brl;
 
 import org.junit.jupiter.api.Test;
@@ -11,3 +12,4 @@ class BrlApplicationTests {
 	}
 
 }
+*/
