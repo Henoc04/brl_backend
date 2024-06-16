@@ -26,6 +26,7 @@ public class Residence {
 	private String nameResidence;
 	private String localisationResidence;
 	private float prixResidence;
+	private String etatResidence;
 	
 	@OneToMany(mappedBy = "residence")
 	@JsonIgnore

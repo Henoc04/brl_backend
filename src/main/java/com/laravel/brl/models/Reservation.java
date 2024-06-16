@@ -23,6 +23,8 @@ public class Reservation {
 	private Date dateEntrer;
 	private Date dateSortie;
 	private Date dateReservation;
+	private float total;
+	private String etatReservation;
 	
 	@ManyToOne
 	private Client client;

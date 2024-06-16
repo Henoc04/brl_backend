@@ -18,5 +18,6 @@ public class ResidenceDTO {
 	private String localisationResidence;
 	private float prixResidence;
 	private TypeResidence typeResidence;
+	private String etatResidence;
 
 }

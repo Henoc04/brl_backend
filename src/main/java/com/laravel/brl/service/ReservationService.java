@@ -15,6 +15,7 @@ public interface ReservationService {
 	void deleteReservationById(Long id);
 	ReservationDTO getReservation(Long id);
 	List<ReservationDTO> getAllReservations();
+	//ReservationDTO calculateTotal(ReservationDTO r);
 
 	ReservationDTO convertEntityToDto(Reservation r);
 	Reservation convertDtoToEntity(ReservationDTO r);
