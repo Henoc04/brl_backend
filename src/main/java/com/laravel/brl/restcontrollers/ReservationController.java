@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.laravel.brl.dto.BilanDTO;
 import com.laravel.brl.dto.ReservationDTO;
 import com.laravel.brl.service.ReservationService;
 
@@ -52,5 +53,11 @@ public class ReservationController {
 		reservationService.deleteReservationById(id);
 		
 	}
+	
+	@GetMapping("/bilan")
+    public List<BilanDTO> getMonthlySummaries() {
+		return reservationService.getMonthlySummaries();
+       
+    }
 
 }

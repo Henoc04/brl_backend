@@ -20,17 +20,5 @@ public class Utils {
 			
 			return r;
 		}
-	/*
-	public Reservation etatReservation(Reservation r) {
-		
-		if (LocalDate.now().isBefore(r.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
-			r.setEtatReservation("Réserver");
-		}else if ((r.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) && (r.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(r.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) ) {
-			r.setEtatReservation("En cours");
-		}else {
-			r.setEtatReservation("Terminer");
-		}
-		return r;
-	}
-	*/
+	
 }

@@ -3,9 +3,9 @@ package com.laravel.brl.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.laravel.brl.models.TypeResidence;
+import com.laravel.brl.models.Depense;
 
 @Repository
-public interface TypeResidenceRepository extends JpaRepository<TypeResidence, Long>{
+public interface DepenseRepository extends JpaRepository<Depense, Long>{
 
 }

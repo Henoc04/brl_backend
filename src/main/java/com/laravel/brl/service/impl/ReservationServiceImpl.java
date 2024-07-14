@@ -10,13 +10,18 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.laravel.brl.dto.BilanDTO;
 import com.laravel.brl.dto.ReservationDTO;
+import com.laravel.brl.models.Bilan;
 import com.laravel.brl.models.Reservation;
 import com.laravel.brl.models.Residence;
 import com.laravel.brl.repository.ReservationRepository;
 import com.laravel.brl.repository.ResidenceRepository;
 import com.laravel.brl.service.ReservationService;
 import com.laravel.brl.utils.Utils;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -83,23 +88,6 @@ public class ReservationServiceImpl implements ReservationService {
 		reservation = modelMapper.map(r, Reservation.class);
 		return reservation;
 	}
-
-	/*
-	@Override
-	public ReservationDTO calculateTotal(ReservationDTO r) {
-		
-		float prix = r.getResidence().getPrixResidence();
-		
-		if (r.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(r.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
-		long durer = ChronoUnit.DAYS.between(r.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() , r.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		r.setTotal(prix * durer); 
-		} else {
-			System.out.println("la date d'entrer est superieur a la date de sortie");
-		}
-		
-		return r;
-	}
-	*/
 	
 	public Reservation etatReservation(Reservation reservation) {
 			
@@ -133,5 +121,37 @@ public class ReservationServiceImpl implements ReservationService {
         
         return reservation;
     }
+	
+	@PersistenceContext
+    private EntityManager entityManager;
+
+	@Override
+	public List<BilanDTO> getMonthlySummaries() {
+		
+		 String jpqlQuery = "SELECT r.residence, YEAR(r.dateEntrer), DATE_FORMAT(r.dateEntrer, '%M'), SUM(r.total), " +
+                 "(SELECT COALESCE(SUM(d.montantDepense), 0) " +
+                 " FROM Depense d " +
+                 " WHERE r.residence = d.residence AND YEAR(r.dateEntrer) = YEAR(d.dateDepense) AND MONTH(r.dateEntrer) = MONTH(d.dateDepense)) " +
+                 "FROM Reservation r " +
+                 "GROUP BY r.residence, YEAR(r.dateEntrer), MONTH(r.dateEntrer)";
+		 
+		 List<Object[]> results = entityManager.createQuery(jpqlQuery, Object[].class)
+                 .getResultList();
+		 
+		 List<BilanDTO> bilans = results.stream()
+                 .map(row -> new BilanDTO((Residence) row[0], (int) row[1], (String) row[2], (Double) row[3], (Double) row[4]))
+                 .collect(Collectors.toList());
+		 
+		return bilans;
+	}
+
+	@Override
+	public BilanDTO convertEntityToDtoBilan(Bilan r) {
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+		BilanDTO bilanDTO = modelMapper.map(r, BilanDTO.class);
+		return bilanDTO;
+	}
+
+	
 	
 }

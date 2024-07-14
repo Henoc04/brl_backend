@@ -1,6 +1,8 @@
 package com.laravel.brl.models;
 
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +24,7 @@ public class Depense {
 	private String libeleDepense;
 	private float montantDepense;
 	private String descriptionDepense;
+	private Date dateDepense;
 	
 	@ManyToOne
 	private Residence residence;
