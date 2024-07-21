@@ -14,6 +14,13 @@ RUN mvn clean package -DskipTests
 # Étape 2 : Créer l'image finale
 FROM openjdk:17-jdk-slim
 
+
+ENV MYSQL_HOST=localhost
+ENV MYSQL_PORT=3306
+ENV MYSQL_DATABASE=spring_db
+ENV MYSQL_USER=root
+ENV MYSQL_PASSWORD=root
+
 # Définir le répertoire de travail
 WORKDIR /app
 
