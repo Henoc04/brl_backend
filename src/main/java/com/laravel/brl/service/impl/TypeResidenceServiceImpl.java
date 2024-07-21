@@ -1,11 +1,7 @@
 package com.laravel.brl.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.laravel.brl.dto.TypeResidenceDTO;
@@ -13,14 +9,14 @@ import com.laravel.brl.models.TypeResidence;
 import com.laravel.brl.repository.TypeResidenceRepository;
 import com.laravel.brl.service.TypeResidenceService;
 
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TypeResidenceServiceImpl implements TypeResidenceService{
 	
-	@Autowired
-	TypeResidenceRepository typeResidenceRepository;
-	
-	@Autowired
-	ModelMapper modelMapper;
+	private final TypeResidenceRepository typeResidenceRepository;
 
 	@Override
 	public TypeResidenceDTO saveTypeResidence(TypeResidenceDTO t) {
@@ -46,28 +42,34 @@ public class TypeResidenceServiceImpl implements TypeResidenceService{
 
 	@Override
 	public TypeResidenceDTO getTypeResidence(Long id) {
-		return convertEntityToDto(typeResidenceRepository.findById(id).get());
+		return typeResidenceRepository.findById(id)
+				.map(this::convertEntityToDto)
+				.orElseThrow(() -> new EntityNotFoundException("Type de résidence non trouvé"));
 	}
 
 	@Override
 	public List<TypeResidenceDTO> getAllTypeResidences() {
 		return typeResidenceRepository.findAll().stream()
 				.map(this::convertEntityToDto)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override
 	public TypeResidenceDTO convertEntityToDto(TypeResidence t) {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE); // pour retrouver des champs en declarer jdans la class principal (faire perdre en precision)
-		TypeResidenceDTO typeResidenceDTO = modelMapper.map(t, TypeResidenceDTO.class);
-		return typeResidenceDTO;
+		
+		return TypeResidenceDTO.builder()
+				.idTypeResidence(t.getIdTypeResidence())
+				.libeleTypeResidence(t.getLibeleTypeResidence())
+				.build();
 	}
 
 	@Override
 	public TypeResidence convertDtoToEntity(TypeResidenceDTO t) {
-		TypeResidence typeResidence = new TypeResidence();
-		typeResidence = modelMapper.map(t, TypeResidence.class);
-		return typeResidence;
+		
+		return TypeResidence.builder()
+				.idTypeResidence(t.getIdTypeResidence())
+				.libeleTypeResidence(t.getLibeleTypeResidence())
+				.build();
 	}
 
 }

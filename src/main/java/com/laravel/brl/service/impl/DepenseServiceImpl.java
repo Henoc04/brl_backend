@@ -1,26 +1,24 @@
 package com.laravel.brl.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.laravel.brl.dto.DepenseDTO;
 import com.laravel.brl.models.Depense;
+import com.laravel.brl.models.Residence;
+import com.laravel.brl.models.TypeResidence;
 import com.laravel.brl.repository.DepenseRepository;
 import com.laravel.brl.service.DepenseService;
 
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class DepenseServiceImpl implements DepenseService{
 	
-	@Autowired
-	DepenseRepository depenseRepository;
-	
-	@Autowired
-	ModelMapper modelMapper;
+	private final DepenseRepository depenseRepository;
 
 	@Override
 	public DepenseDTO saveDepense(DepenseDTO d) {
@@ -46,28 +44,66 @@ public class DepenseServiceImpl implements DepenseService{
 
 	@Override
 	public DepenseDTO getDepense(Long id) {
-		return convertEntityToDto(depenseRepository.findById(id).get());
+		return depenseRepository.findById(id)
+				.map(this::convertEntityToDto)
+				.orElseThrow(() -> new EntityNotFoundException("Dépense non trouvé"));
 	}
 
 	@Override
 	public List<DepenseDTO> getAllDepenses() {
 		return depenseRepository.findAll().stream()
 				.map(this::convertEntityToDto)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override
 	public DepenseDTO convertEntityToDto(Depense d) {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE); 
-		DepenseDTO depenseDTO = modelMapper.map(d, DepenseDTO.class);
-		return depenseDTO;
+		
+		return DepenseDTO.builder()
+				.idDepense(d.getIdDepense())
+				.libeleDepense(d.getLibeleDepense())
+				.dateDepense(d.getDateDepense())
+				.descriptionDepense(d.getDescriptionDepense())
+				.montantDepense(d.getMontantDepense())
+				.residence(
+						Residence.builder()
+						.idResidence(d.getResidence().getIdResidence())
+						.nameResidence(d.getResidence().getNameResidence())
+						.localisationResidence(d.getResidence().getLocalisationResidence())
+						.prixResidence(d.getResidence().getPrixResidence())
+						.etatResidence(d.getResidence().getEtatResidence())
+						.typeResidence(
+								TypeResidence.builder()
+								.idTypeResidence(d.getResidence().getTypeResidence().getIdTypeResidence())
+								.libeleTypeResidence(d.getResidence().getTypeResidence().getLibeleTypeResidence())
+								.build())
+						.build())
+				.build();
 	}
 
 	@Override
 	public Depense convertDtoToEntity(DepenseDTO d) {
-		Depense depense = new Depense();
-		depense = modelMapper.map(d, Depense.class);
-		return depense;
+		
+		return Depense.builder()
+				.idDepense(d.getIdDepense())
+				.libeleDepense(d.getLibeleDepense())
+				.dateDepense(d.getDateDepense())
+				.descriptionDepense(d.getDescriptionDepense())
+				.montantDepense(d.getMontantDepense())
+				.residence(
+						Residence.builder()
+						.idResidence(d.getResidence().getIdResidence())
+						.nameResidence(d.getResidence().getNameResidence())
+						.localisationResidence(d.getResidence().getLocalisationResidence())
+						.prixResidence(d.getResidence().getPrixResidence())
+						.etatResidence(d.getResidence().getEtatResidence())
+						.typeResidence(
+								TypeResidence.builder()
+								.idTypeResidence(d.getResidence().getTypeResidence().getIdTypeResidence())
+								.libeleTypeResidence(d.getResidence().getTypeResidence().getLibeleTypeResidence())
+								.build())
+						.build())
+				.build();
 	}
 
 }

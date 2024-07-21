@@ -1,11 +1,7 @@
 package com.laravel.brl.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.laravel.brl.dto.ClientDTO;
@@ -13,14 +9,15 @@ import com.laravel.brl.models.Client;
 import com.laravel.brl.repository.ClientRepository;
 import com.laravel.brl.service.ClientService;
 
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
 
-	@Autowired
-	ClientRepository clientRepository;
 	
-	@Autowired
-	ModelMapper modelMapper;
+	private final ClientRepository clientRepository;
 	
 	@Override
 	public ClientDTO saveClient(ClientDTO c) {
@@ -46,71 +43,61 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public ClientDTO getClient(Long id) {
-		return convertEntityToDto(clientRepository.findById(id).get());
+		
+		return clientRepository.findById(id)
+				.map(this::convertEntityToDto)
+				.orElseThrow(() -> new EntityNotFoundException("Client non trouvé"));
+		
 	}
 
 	@Override
 	public List<ClientDTO> getAllClients() {
-		//convertir les element de la liste automatique avec la programmation fonctionnelle (ça marche pour tout type)
-		return clientRepository.findAll().stream()
+		return clientRepository.findAll()
+				.stream()
 				.map(this::convertEntityToDto)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override
 	public List<ClientDTO> findByNameClient(String name) {
 		return clientRepository.findByNameClient(name).stream()
 				.map(this::convertEntityToDto)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override
 	public List<ClientDTO> findByName(String name) {
 		return clientRepository.findByName(name).stream()
 				.map(this::convertEntityToDto)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override
 	public ClientDTO convertEntityToDto(Client c) {
 		
-		//avec la bibliothèque ModelMapper
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE); // pour retrouver des champs en declarer jdans la class principal (faire perdre en precision)
-		ClientDTO clientDTO = modelMapper.map(c, ClientDTO.class);
-		return clientDTO;
-		
-		/*
-		//la manière classique
-		ClientDTO clientDTO = new ClientDTO();
-		clientDTO.setIdClient(c.getIdClient());
-		clientDTO.setNameClient(c.getNameClient());
-		clientDTO.setBithdateClient(c.getBithdateClient());
-		return clientDTO
-		*/
-		
-		//affectation avec builder (programmation fonctionnelle)
-		/*
 		return ClientDTO.builder()
 				.idClient(c.getIdClient())
 				.nameClient(c.getNameClient())
-				.bithdateClient(c.getBithdateClient())
+				.pieceClient(c.getPieceClient())
+				.contactClient(c.getContactClient())
+				.adresseClient(c.getAdresseClient())
 				.build();
-				*/
+		
+		
 	}
 
 	@Override
 	public Client convertDtoToEntity(ClientDTO c) {
 		
-		Client client = new Client();
-		client = modelMapper.map(c, Client.class);
-		return client;
-		/*
-		Client client = new Client();
-		client.setIdClient(c.getIdClient());
-		client.setNameClient(c.getNameClient());
-		client.setBithdateClient(c.getBithdateClient());
-		return client;
-		*/
+		return Client.builder()
+				.idClient(c.getIdClient())
+				.nameClient(c.getNameClient())
+				.pieceClient(c.getPieceClient())
+				.contactClient(c.getContactClient())
+				.adresseClient(c.getAdresseClient())
+				.build();
+		
+		
 	}
 
 }
