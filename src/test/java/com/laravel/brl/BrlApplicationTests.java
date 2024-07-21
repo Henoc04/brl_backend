@@ -1,4 +1,4 @@
-/*
+
 package com.laravel.brl;
 
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,8 @@ class BrlApplicationTests {
 
 	@Test
 	void contextLoads() {
-	}
+   // TODO document why this method is empty
+ }
 
 }
-*/
+

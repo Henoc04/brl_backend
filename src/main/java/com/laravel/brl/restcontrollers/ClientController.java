@@ -2,7 +2,6 @@ package com.laravel.brl.restcontrollers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.laravel.brl.dto.ClientDTO;
 import com.laravel.brl.service.ClientService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/client")
 @CrossOrigin
+@RequiredArgsConstructor
 public class ClientController {
 
-	@Autowired
-	ClientService clientService;
+	private final ClientService clientService;
 	
 	@GetMapping
 	List<ClientDTO> getAllClients(){
@@ -30,7 +31,7 @@ public class ClientController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ClientDTO getClientById(@PathVariable("id") Long id) {
+	public ClientDTO getClientById(@PathVariable Long id) {
 		return clientService.getClient(id);
 	}
 	
@@ -47,13 +48,13 @@ public class ClientController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public void deleteClient(@PathVariable("id") Long id) {
+	public void deleteClient(@PathVariable Long id) {
 		 clientService.deleteClientById(id);
 		
 	}
 	
 	@GetMapping(value = "/client/{name}")
-	public List<ClientDTO> getClientByName(@PathVariable("name") String name) {
+	public List<ClientDTO> getClientByName(@PathVariable String name) {
 		 return clientService.findByNameClient(name);		
 	}
 	

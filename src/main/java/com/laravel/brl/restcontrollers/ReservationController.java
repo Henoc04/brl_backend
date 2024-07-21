@@ -2,7 +2,6 @@ package com.laravel.brl.restcontrollers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,14 +16,16 @@ import com.laravel.brl.dto.BilanDTO;
 import com.laravel.brl.dto.ReservationDTO;
 import com.laravel.brl.service.ReservationService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/reservation")
 @CrossOrigin
+@RequiredArgsConstructor
 public class ReservationController {
 	
 
-	@Autowired
-	ReservationService reservationService;
+	private final ReservationService reservationService;
 	
 	@GetMapping
 	List<ReservationDTO> getAllReservations(){
@@ -32,7 +33,7 @@ public class ReservationController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ReservationDTO getReservationById(@PathVariable("id") Long id) {
+	public ReservationDTO getReservationById(@PathVariable Long id) {
 		return reservationService.getReservation(id);
 	}
 	
@@ -49,7 +50,7 @@ public class ReservationController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public void deleteReservation(@PathVariable("id") Long id) {
+	public void deleteReservation(@PathVariable Long id) {
 		reservationService.deleteReservationById(id);
 		
 	}
