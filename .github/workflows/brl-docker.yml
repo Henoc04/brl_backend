@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '17'  # Version Python à utiliser
+          java-version: '17'  # Version Java à utiliser
 
       - name: Build with Maven
         run: mvn clean package
@@ -36,6 +36,10 @@ jobs:
       with:
         username: "henange01750"
         password: "dckr_pat_CuaH4ylR86dT4exQyTjU4c5QGAQ"
+
+    - name: Build and start with docker compose
+        run:|
+          docker-compose up --build -d
  
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
