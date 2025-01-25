@@ -99,6 +99,7 @@ public class ReservationServiceImpl implements ReservationService {
 						.localisationResidence(r.getResidence().getLocalisationResidence())
 						.prixResidence(r.getResidence().getPrixResidence())
 						.etatResidence(r.getResidence().getEtatResidence())
+						.imageUrl(r.getResidence().getImageUrl())
 						.typeResidence(
 								TypeResidence.builder()
 								.idTypeResidence(r.getResidence().getTypeResidence().getIdTypeResidence())
@@ -137,6 +138,7 @@ public class ReservationServiceImpl implements ReservationService {
 						.localisationResidence(r.getResidence().getLocalisationResidence())
 						.prixResidence(r.getResidence().getPrixResidence())
 						.etatResidence(r.getResidence().getEtatResidence())
+						.imageUrl(r.getResidence().getImageUrl())
 						.typeResidence(
 								TypeResidence.builder()
 								.idTypeResidence(r.getResidence().getTypeResidence().getIdTypeResidence())

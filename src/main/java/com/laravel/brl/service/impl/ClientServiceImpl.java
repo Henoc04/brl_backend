@@ -65,12 +65,12 @@ public class ClientServiceImpl implements ClientService {
 				.toList();
 	}
 
-	@Override
-	public List<ClientDTO> findByName(String name) {
-		return clientRepository.findByName(name).stream()
-				.map(this::convertEntityToDto)
-				.toList();
-	}
+//	@Override
+//	public List<ClientDTO> findByName(String name) {
+//		return clientRepository.findByName(name).stream()
+//				.map(this::convertEntityToDto)
+//				.toList();
+//	}
 
 	@Override
 	public ClientDTO convertEntityToDto(Client c) {

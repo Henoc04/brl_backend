@@ -72,6 +72,7 @@ public class DepenseServiceImpl implements DepenseService{
 						.localisationResidence(d.getResidence().getLocalisationResidence())
 						.prixResidence(d.getResidence().getPrixResidence())
 						.etatResidence(d.getResidence().getEtatResidence())
+						.imageUrl(d.getResidence().getImageUrl())
 						.typeResidence(
 								TypeResidence.builder()
 								.idTypeResidence(d.getResidence().getTypeResidence().getIdTypeResidence())
@@ -97,6 +98,7 @@ public class DepenseServiceImpl implements DepenseService{
 						.localisationResidence(d.getResidence().getLocalisationResidence())
 						.prixResidence(d.getResidence().getPrixResidence())
 						.etatResidence(d.getResidence().getEtatResidence())
+						.imageUrl(d.getResidence().getImageUrl())
 						.typeResidence(
 								TypeResidence.builder()
 								.idTypeResidence(d.getResidence().getTypeResidence().getIdTypeResidence())

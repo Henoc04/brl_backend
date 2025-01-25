@@ -16,9 +16,7 @@ public interface ClientService {
 	List<ClientDTO> getAllClients();
 	
 	List<ClientDTO> findByNameClient(String name);
-	List<ClientDTO> findByName (String name); 
 	
-
 	ClientDTO convertEntityToDto(Client c);
 	Client convertDtoToEntity(ClientDTO c);
 }

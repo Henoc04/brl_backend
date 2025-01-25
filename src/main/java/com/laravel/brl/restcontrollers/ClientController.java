@@ -15,16 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.laravel.brl.dto.ClientDTO;
 import com.laravel.brl.service.ClientService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/client")
 @CrossOrigin
 @RequiredArgsConstructor
+@Tag(name = "Clients", description = "Endpoints de la table client")
 public class ClientController {
 
 	private final ClientService clientService;
 	
+	@Operation(summary = "Obtenir la liste de tout les client")
 	@GetMapping
 	List<ClientDTO> getAllClients(){
 		return clientService.getAllClients();

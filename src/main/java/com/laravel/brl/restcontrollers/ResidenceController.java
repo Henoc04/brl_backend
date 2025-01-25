@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.laravel.brl.dto.ResidenceDTO;
+import com.laravel.brl.models.TypeResidence;
 import com.laravel.brl.service.ResidenceService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,14 +39,52 @@ public class ResidenceController {
 	}
 	
 	@PostMapping
-	public ResidenceDTO createResidence(@RequestBody ResidenceDTO residence) {
-		return residenceService.saveResidence(residence);
+	public ResidenceDTO createResidence(@RequestParam("name") String name,
+										@RequestParam("localisation") String localisation,
+										@RequestParam("prix") float prix,
+										@RequestParam("idtype") Long idType,
+										@RequestParam("libeletype") String libeleType,
+										@RequestParam("image") MultipartFile image) {
+		
+		ResidenceDTO residenceDTO = new ResidenceDTO();
+		TypeResidence typeResidence = new TypeResidence();
+				
+		typeResidence.setIdTypeResidence(idType);
+		typeResidence.setLibeleTypeResidence(libeleType);
+		
+		residenceDTO.setNameResidence(name);
+		residenceDTO.setLocalisationResidence(localisation);
+		residenceDTO.setPrixResidence(prix);
+		residenceDTO.setTypeResidence(typeResidence);
+		
+		return residenceService.saveResidence(residenceDTO, image);
 		
 	}
 	
 	@PutMapping
-	public ResidenceDTO updateResidence(@RequestBody ResidenceDTO residence) {
-		return residenceService.updateResidence(residence);
+	public ResidenceDTO updateResidence(@RequestParam("id") Long id,
+										@RequestParam("name") String name,
+										@RequestParam("localisation") String localisation,
+										@RequestParam("prix") float prix,
+										@RequestParam("idtype") Long idType,
+										@RequestParam("libeletype") String libeleType,
+										@RequestParam("etat") String etat,
+										@RequestParam("image") MultipartFile image) {
+		
+		ResidenceDTO residenceDTO = new ResidenceDTO();
+		TypeResidence typeResidence = new TypeResidence();
+				
+		typeResidence.setIdTypeResidence(idType);
+		typeResidence.setLibeleTypeResidence(libeleType);
+		
+		residenceDTO.setIdResidence(id);
+		residenceDTO.setNameResidence(name);
+		residenceDTO.setLocalisationResidence(localisation);
+		residenceDTO.setPrixResidence(prix);
+		residenceDTO.setTypeResidence(typeResidence);
+		residenceDTO.setEtatResidence(etat);
+		
+		return residenceService.updateResidence(residenceDTO, image);
 		
 	}
 	
@@ -53,5 +93,6 @@ public class ResidenceController {
 		residenceService.deleteResidenceById(id);
 		
 	}
+	
 
 }

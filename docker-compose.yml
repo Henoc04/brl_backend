@@ -1,31 +1,31 @@
 version: '3.8'
+
 services:
   app:
+    image: openjdk:17-jdk-slim
+    container_name: brl-app
     build:
-      context: .
+      context: .  # Assurez-vous que votre Dockerfile est au même niveau que ce docker-compose.yml
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Mapper le port de l'application
     environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_PORT=3306
-      - MYSQL_DATABASE=spring_db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/spring_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
     depends_on:
-      - mysql
+      - mysqldb
 
-  mysql:
+  mysqldb:
     image: mysql:8.0
-    container_name: mysql
+    container_name: brl-db
     ports:
-      - "3306:3306"
+      - "3307:3306"  # Gardez le port par défaut pour éviter toute confusion
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: spring_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  mysql-data:
+  mysql_data:
