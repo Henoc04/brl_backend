@@ -2,7 +2,6 @@ package com.laravel.brl.restcontrollers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.laravel.brl.dto.DepenseDTO;
 import com.laravel.brl.service.DepenseService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/depense")
 @CrossOrigin
+@RequiredArgsConstructor
 public class DepenseController {
 	
-	@Autowired
-	DepenseService depenseService;
+	
+	private final DepenseService depenseService;
 	
 	@GetMapping
 	List<DepenseDTO> getAllDepenses(){
@@ -30,7 +32,7 @@ public class DepenseController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public DepenseDTO getDepenseById(@PathVariable("id") Long id) {
+	public DepenseDTO getDepenseById(@PathVariable Long id) {
 		return depenseService.getDepense(id);
 	}
 	
@@ -47,7 +49,7 @@ public class DepenseController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public void deleteClient(@PathVariable("id") Long id) {
+	public void deleteClient(@PathVariable Long id) {
 		depenseService.deleteDepenseById(id);
 		
 	}

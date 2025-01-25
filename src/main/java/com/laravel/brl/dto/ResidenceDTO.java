@@ -13,11 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ResidenceDTO {
 	
-	private Long IdResidence;
+	private Long idResidence;
 	private String nameResidence;
 	private String localisationResidence;
 	private float prixResidence;
 	private TypeResidence typeResidence;
 	private String etatResidence;
+	private String imageUrl;
 
 }

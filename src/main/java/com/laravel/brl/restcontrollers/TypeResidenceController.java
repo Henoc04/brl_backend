@@ -2,7 +2,6 @@ package com.laravel.brl.restcontrollers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,14 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.laravel.brl.dto.TypeResidenceDTO;
 import com.laravel.brl.service.TypeResidenceService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/typeresidence")
 @CrossOrigin
+@RequiredArgsConstructor
 public class TypeResidenceController {
 	
 	
-	@Autowired
-	TypeResidenceService typeResidenceService;
+	private final TypeResidenceService typeResidenceService;
 	
 	@GetMapping
 	List<TypeResidenceDTO> getAllTypeResidences(){
@@ -31,7 +32,7 @@ public class TypeResidenceController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public TypeResidenceDTO getTypeResidenceById(@PathVariable("id") Long id) {
+	public TypeResidenceDTO getTypeResidenceById(@PathVariable Long id) {
 		return typeResidenceService.getTypeResidence(id);
 	}
 	
@@ -48,7 +49,7 @@ public class TypeResidenceController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public void deleteTypeResidence(@PathVariable("id") Long id) {
+	public void deleteTypeResidence(@PathVariable Long id) {
 		typeResidenceService.deleteTypeResidenceById(id);
 		
 	}

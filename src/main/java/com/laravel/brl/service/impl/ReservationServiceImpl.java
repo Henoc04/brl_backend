@@ -3,39 +3,35 @@ package com.laravel.brl.service.impl;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.laravel.brl.dto.BilanDTO;
 import com.laravel.brl.dto.ReservationDTO;
 import com.laravel.brl.models.Bilan;
+import com.laravel.brl.models.Client;
 import com.laravel.brl.models.Reservation;
 import com.laravel.brl.models.Residence;
+import com.laravel.brl.models.TypeResidence;
 import com.laravel.brl.repository.ReservationRepository;
 import com.laravel.brl.repository.ResidenceRepository;
 import com.laravel.brl.service.ReservationService;
 import com.laravel.brl.utils.Utils;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
 	
-	Utils utils = new Utils();
+	private Utils utils = new Utils();
 		
-	@Autowired
-	private ReservationRepository reservationRepository;
+	private final ReservationRepository reservationRepository;
 	
-	@Autowired
-    private ResidenceRepository residenceRepository;
-	
-	@Autowired
-	ModelMapper modelMapper;
+    private final ResidenceRepository residenceRepository;
 
 	@Override
 	public ReservationDTO saveReservation(ReservationDTO r) {
@@ -52,7 +48,6 @@ public class ReservationServiceImpl implements ReservationService {
 	@Override
 	public void deleteReservation(Reservation r) {
 		reservationRepository.delete(r);
-		
 	}
 
 	@Override
@@ -63,7 +58,9 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Override
 	public ReservationDTO getReservation(Long id) {
-		return convertEntityToDto(reservationRepository.findById(id).get());
+		return reservationRepository.findById(id)
+				.map(this::convertEntityToDto)
+				.orElseThrow(() -> new EntityNotFoundException("Réservation  non trouvé"));
 	}
 
 	@Override
@@ -72,21 +69,85 @@ public class ReservationServiceImpl implements ReservationService {
 				.map(this::etatReservation)
 				.map(this::updateResidenceState)
 				.map(this::convertEntityToDto)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override
 	public ReservationDTO convertEntityToDto(Reservation r) {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-		ReservationDTO reservationDTO = modelMapper.map(r, ReservationDTO.class);
-		return reservationDTO;
+	
+		return ReservationDTO.builder()
+				.idReservation(r.getIdReservation())
+				.client(
+						Client.builder()
+						.idClient(r.getClient().getIdClient())
+						.nameClient(r.getClient().getNameClient())
+						.pieceClient(r.getClient().getPieceClient())
+						.adresseClient(r.getClient().getAdresseClient())
+						.contactClient(r.getClient().getContactClient())
+						.reservations(r.getClient().getReservations())
+						.build()
+						)
+				.dateEntrer(r.getDateEntrer())
+				.dateReservation(r.getDateReservation())
+				.dateSortie(r.getDateSortie())
+				.total(r.getTotal())
+				.etatReservation(r.getEtatReservation())
+				.residence(
+						Residence.builder()
+						.idResidence(r.getResidence().getIdResidence())
+						.nameResidence(r.getResidence().getNameResidence())
+						.localisationResidence(r.getResidence().getLocalisationResidence())
+						.prixResidence(r.getResidence().getPrixResidence())
+						.etatResidence(r.getResidence().getEtatResidence())
+						.imageUrl(r.getResidence().getImageUrl())
+						.typeResidence(
+								TypeResidence.builder()
+								.idTypeResidence(r.getResidence().getTypeResidence().getIdTypeResidence())
+								.libeleTypeResidence(r.getResidence().getTypeResidence().getLibeleTypeResidence())
+								.build()
+								)
+						.build()
+						)
+				.build();
 	}
 
 	@Override
 	public Reservation convertDtoToEntity(ReservationDTO r) {
-		Reservation reservation = new Reservation();
-		reservation = modelMapper.map(r, Reservation.class);
-		return reservation;
+	
+		return Reservation.builder()
+				.idReservation(r.getIdReservation())
+				.client(
+						Client.builder()
+						.idClient(r.getClient().getIdClient())
+						.nameClient(r.getClient().getNameClient())
+						.pieceClient(r.getClient().getPieceClient())
+						.adresseClient(r.getClient().getAdresseClient())
+						.contactClient(r.getClient().getContactClient())
+						.reservations(r.getClient().getReservations())
+						.build()
+						)
+				.dateEntrer(r.getDateEntrer())
+				.dateReservation(r.getDateReservation())
+				.dateSortie(r.getDateSortie())
+				.total(r.getTotal())
+				.etatReservation(r.getEtatReservation())
+				.residence(
+						Residence.builder()
+						.idResidence(r.getResidence().getIdResidence())
+						.nameResidence(r.getResidence().getNameResidence())
+						.localisationResidence(r.getResidence().getLocalisationResidence())
+						.prixResidence(r.getResidence().getPrixResidence())
+						.etatResidence(r.getResidence().getEtatResidence())
+						.imageUrl(r.getResidence().getImageUrl())
+						.typeResidence(
+								TypeResidence.builder()
+								.idTypeResidence(r.getResidence().getTypeResidence().getIdTypeResidence())
+								.libeleTypeResidence(r.getResidence().getTypeResidence().getLibeleTypeResidence())
+								.build()
+								)
+						.build()
+						)
+				.build();
 	}
 	
 	public Reservation etatReservation(Reservation reservation) {
@@ -94,7 +155,7 @@ public class ReservationServiceImpl implements ReservationService {
 			if (LocalDate.now().isBefore(reservation.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) {
 				reservation.setEtatReservation("En attente");
 			}else if (((reservation.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isBefore(LocalDate.now())) || (reservation.getDateEntrer().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isEqual(LocalDate.now())) ) && 
-					((LocalDate.now().isBefore(reservation.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))) || (LocalDate.now().isEqual(reservation.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) ) {
+					(LocalDate.now().isBefore(reservation.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) || (LocalDate.now().isEqual(reservation.getDateSortie().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())) ) {
 				reservation.setEtatReservation("En cours");
 			}else {
 				reservation.setEtatReservation("Terminer");
@@ -138,18 +199,28 @@ public class ReservationServiceImpl implements ReservationService {
 		 List<Object[]> results = entityManager.createQuery(jpqlQuery, Object[].class)
                  .getResultList();
 		 
-		 List<BilanDTO> bilans = results.stream()
+		return results.stream()
                  .map(row -> new BilanDTO((Residence) row[0], (int) row[1], (String) row[2], (Double) row[3], (Double) row[4]))
-                 .collect(Collectors.toList());
-		 
-		return bilans;
+                 .toList();
 	}
 
 	@Override
 	public BilanDTO convertEntityToDtoBilan(Bilan r) {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-		BilanDTO bilanDTO = modelMapper.map(r, BilanDTO.class);
-		return bilanDTO;
+		return BilanDTO.builder()
+				.residence(
+						Residence.builder()
+						.idResidence(r.getResidence().getIdResidence())
+						.nameResidence(r.getResidence().getNameResidence())
+						.localisationResidence(r.getResidence().getLocalisationResidence())
+						.prixResidence(r.getResidence().getPrixResidence())
+						.etatResidence(r.getResidence().getEtatResidence())
+						.build()
+						)
+				.depenses(r.getDepenses())
+				.year(r.getYear())
+				.month(r.getMonth())
+				.recette(r.getRecette())
+				.build();
 	}
 
 	

@@ -8,13 +8,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -22,11 +25,13 @@ public class Residence {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long IdResidence;
+	private Long idResidence;
 	private String nameResidence;
 	private String localisationResidence;
 	private float prixResidence;
 	private String etatResidence;
+	@Lob
+	private String imageUrl;
 	
 	@OneToMany(mappedBy = "residence")
 	@JsonIgnore
