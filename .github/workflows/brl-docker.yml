@@ -19,7 +19,6 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -37,12 +36,6 @@ jobs:
         username: "henange01750"
         password: "dckr_pat_CuaH4ylR86dT4exQyTjU4c5QGAQ"
 
-    - name: Build and start with docker compose
-      run: |
-        docker-compose build
-    - name: push sur docker bub
-      run: docker-compose push
- 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
